@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "id": "basic-example",
+  "displayName": "Basic Writing Studio Example",
+  "localePreset": "en",
+  "contentTree": {
+    "root": "manuscript",
+    "levels": [
+      {
+        "levelName": "part",
+        "dirPattern": "Part-{num}_{name}",
+        "numberStyle": "arabic",
+        "indexFile": null
+      }
+    ],
+    "leaf": {
+      "filePattern": "Chapter-{num}.md",
+      "numberStyle": "arabic",
+      "titleTemplate": "Chapter {num}: {title}",
+      "numberingScope": "book",
+      "titleStripRegex": "^Chapter\\s+\\d+[：:]?\\s*"
+    }
+  },
+  "draftsDir": "drafts",
+  "sidebarSources": [
+    {
+      "id": "setting_index",
+      "label": "Setting index",
+      "file": "setting-index.md",
+      "parser": "markdown-table",
+      "order": 1,
+      "parserConfig": {
+        "sectionHeadingLevels": [2],
+        "columnAliases": {
+          "term": ["Term"],
+          "source": ["Source"],
+          "firstAppearance": ["First seen"],
+          "blankLink": ["Relation"],
+          "status": ["Status"],
+          "serial": ["ID"]
+        },
+        "writerHiddenFields": []
+      }
+    },
+    {
+      "id": "characters",
+      "label": "Characters",
+      "file": "characters.md",
+      "parser": "heading-sections",
+      "order": 2,
+      "parserConfig": {
+        "kind": "characters",
+        "cardHeadingLevel": 2,
+        "sectionHeadingLevel": 3,
+        "authorOnlyMarkers": ["Author only"]
+      }
+    },
+    {
+      "id": "writing_status",
+      "label": "Writing status",
+      "file": "writing-status.md",
+      "parser": "heading-sections",
+      "order": 3,
+      "parserConfig": {
+        "kind": "writingStatus",
+        "lastRefreshedRegex": "Last refreshed: ([0-9-]+)",
+        "stopChapterRegex": "Story stop: Chapter (\\d+)"
+      }
+    }
+  ],
+  "graph": {
+    "schemaVersion": 1,
+    "relationsFile": "relationship-graph.md",
+    "stopSourceId": "writing_status",
+    "typeSources": [
+      {
+        "sourceId": "setting_index",
+        "sectionTypeIds": {
+          "Places": "place"
+        }
+      },
+      {
+        "sourceId": "characters",
+        "defaultTypeId": "character"
+      }
+    ]
+  },
+  "aiProfiles": {
+    "writer": {
+      "description": "Only the public manuscript and public reference cards.",
+      "readable": ["manuscript/**", "setting-index.md", "characters.md", "writing-status.md"],
+      "forbidden": [],
+      "contextSources": ["setting_index", "characters"],
+      "allowVaultBrowsing": false
+    },
+    "planner": {
+      "description": "Example planning profile.",
+      "readable": ["manuscript/**", "setting-index.md", "characters.md", "writing-status.md", "relationship-graph.md"],
+      "forbidden": [],
+      "allowVaultBrowsing": true
+    },
+    "defaultProfile": "writer"
+  },
+  "defaultAgentId": "echo"
+}

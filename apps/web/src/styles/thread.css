@@ -1,0 +1,498 @@
+/**
+ * AI thread panel: action bar, thread list, message bubbles, streaming
+ * cursor, composer. Agent colour dots distinguish claude/codex/opencode/echo.
+ */
+
+.thread-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.thread-actions {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2);
+}
+
+.selection-preview {
+  padding: 0 var(--space-3) var(--space-2);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+
+.selection-preview .quote {
+  color: var(--text-secondary);
+}
+
+.thread-list {
+  padding: 0 var(--space-2) var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-height: 108px;
+  overflow-y: auto;
+}
+
+.thread-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+}
+
+.thread-item:hover {
+  border-color: var(--border-strong);
+}
+
+.thread-item.active {
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.thread-item.disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.thread-section-label {
+  padding: var(--space-1) var(--space-3) 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.thread-item.chat.active {
+  border-color: var(--agent-opencode, var(--accent));
+}
+
+.persona-chip {
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-2);
+  font-weight: 600;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.thread-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+
+.thread-meta label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.thread-current-title {
+  flex: 1 1 100%;
+  color: var(--text-secondary);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agent-select {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--panel-raised);
+  color: var(--text);
+  font: inherit;
+}
+
+.model-id-hint {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.agent-status {
+  padding: 0 var(--space-3) var(--space-1);
+  color: var(--warning);
+  font-size: var(--fs-xs);
+}
+
+.run-error {
+  margin: 0 var(--space-3) var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, var(--border));
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--danger) 8%, var(--panel));
+  color: var(--danger);
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.message {
+  max-width: 88%;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--fs-sm);
+}
+
+.message.user {
+  align-self: flex-end;
+  background: var(--accent-soft);
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.message.assistant {
+  align-self: flex-start;
+  background: var(--panel-raised);
+  border: 1px solid var(--border);
+}
+
+.message-role {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: var(--space-1);
+}
+
+.agent-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.agent-dot.claude {
+  background: var(--accent);
+}
+.agent-dot.codex {
+  background: var(--agent-codex);
+}
+.agent-dot.opencode {
+  background: var(--agent-opencode);
+}
+.agent-dot.echo {
+  background: var(--muted);
+}
+.agent-dot.pi {
+  background: var(--agent-pi, #14b8a6);
+}
+.agent-dot.grok {
+  background: var(--agent-grok);
+}
+
+.message-content {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.rewrite-review-button {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+}
+
+.conflict-canon-repair {
+  margin-top: 6px;
+}
+
+.conflict-results {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.conflict-honesty {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.conflict-empty {
+  padding: var(--space-3) 0;
+  color: var(--text-secondary);
+}
+
+.conflict-group {
+  display: grid;
+  gap: var(--space-2);
+  padding-left: var(--space-2);
+  border-left: 3px solid var(--border-strong);
+}
+
+.conflict-group.high {
+  border-left-color: var(--danger);
+}
+
+.conflict-group.medium {
+  border-left-color: var(--warning);
+}
+
+.conflict-group.low {
+  border-left-color: var(--accent);
+}
+
+.conflict-group-title,
+.conflict-finding-meta {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.conflict-group-title span,
+.conflict-finding-meta span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.conflict-finding {
+  display: grid;
+  gap: var(--space-1);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.conflict-finding:last-child {
+  border-bottom: 0;
+}
+
+.conflict-finding p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.conflict-quote,
+.conflict-canon-link {
+  justify-self: start;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--accent-text);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.conflict-quote {
+  color: var(--text);
+  font-family: var(--font-editor);
+}
+
+.conflict-quote:hover,
+.conflict-canon-link:hover {
+  text-decoration: underline;
+}
+
+.conflict-results.parse-fallback pre {
+  overflow: auto;
+  max-height: 260px;
+  margin: 0;
+  white-space: pre-wrap;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+/* Streaming cursor. */
+.stream-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: var(--accent);
+  animation: stream-blink 1s steps(2, start) infinite;
+}
+
+@keyframes stream-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.thread-input {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-top: 1px solid var(--border);
+}
+
+.thread-input textarea {
+  flex: 1;
+  min-height: 44px;
+  max-height: 180px;
+  resize: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+  background: var(--panel-raised);
+  color: var(--text);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+}
+
+.thread-input textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+/* Markdown-rendered assistant messages: compact chat typography. */
+.message-content.markdown {
+  white-space: normal;
+}
+
+.message-content.markdown > *:first-child {
+  margin-top: 0;
+}
+
+.message-content.markdown > *:last-child {
+  margin-bottom: 0;
+}
+
+.message-content.markdown p,
+.message-content.markdown ul,
+.message-content.markdown ol,
+.message-content.markdown blockquote,
+.message-content.markdown pre {
+  margin: 0 0 var(--space-2);
+}
+
+.message-content.markdown h1,
+.message-content.markdown h2,
+.message-content.markdown h3,
+.message-content.markdown h4,
+.message-content.markdown h5,
+.message-content.markdown h6 {
+  margin: var(--space-2) 0 var(--space-1);
+  font-size: var(--fs-sm);
+}
+
+.message-content.markdown ul,
+.message-content.markdown ol {
+  padding-left: 1.4em;
+}
+
+.message-content.markdown code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: color-mix(in srgb, var(--border) 45%, transparent);
+  border-radius: var(--radius-sm);
+  padding: 0 3px;
+}
+
+.message-content.markdown pre {
+  overflow-x: auto;
+  padding: var(--space-2);
+  background: color-mix(in srgb, var(--border) 30%, transparent);
+  border-radius: var(--radius-sm);
+}
+
+.message-content.markdown pre code {
+  background: none;
+  padding: 0;
+}
+
+.message-content.markdown blockquote {
+  border-left: 3px solid var(--border-strong);
+  padding-left: var(--space-2);
+  color: var(--text-secondary);
+}
+
+/* Raw structured-output stream (rewrite runs) shown dimmed in mono. */
+.message-content.stream-raw {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Live tool activity inside the streaming bubble. */
+.tool-activity {
+  margin-top: var(--space-1);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Last-run usage meta line above the composer. */
+.run-usage {
+  padding: var(--space-1) var(--space-3);
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.context-manifest {
+  margin: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.context-manifest summary {
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.context-manifest-list {
+  border-top: 1px solid var(--border);
+}
+
+.context-manifest-row {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) auto auto auto auto;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+}
+
+.context-manifest-source {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-family: var(--font-mono);
+}
+
+.context-manifest-truncated {
+  color: var(--warning);
+}
+
+.context-manifest-trigger {
+  border-radius: 999px;
+  padding: 0 var(--space-1);
+  background: var(--panel-raised);
+  font-family: var(--font-mono);
+}
+
+.context-manifest-trigger.mention {
+  color: var(--accent-text);
+  background: var(--accent-soft);
+}

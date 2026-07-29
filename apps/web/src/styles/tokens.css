@@ -1,0 +1,154 @@
+/**
+ * Design tokens. Single source of truth for color, spacing, radius, type.
+ * Theme is driven by [data-theme] on <html> (set from the store):
+ *   - absent / "auto" → follow prefers-color-scheme
+ *   - "light" / "dark" → forced
+ * Component CSS must reference these variables, never raw hex (only this
+ * file may contain literal colors).
+ */
+
+:root,
+:root[data-theme='light'] {
+  /* Surface + text (light: warm paper) */
+  --bg: #f6f3ec;
+  --panel: #fdfbf6;
+  --panel-raised: #ffffff;
+  --border: #e3ddd0;
+  --border-strong: #cfc7b6;
+  --text: #2c2a26;
+  --text-secondary: #5f5a50;
+  --muted: #6e685e;
+
+  /* Primary accent */
+  --accent: #6d5a9e;
+  --accent-soft: #ece7f6;
+  --accent-text: #56487f;
+  /* Readable foreground on an accent-filled surface. */
+  --on-accent: #ffffff;
+
+  /* Status */
+  --success: #4a7c59;
+  --warning: #895a13;
+  --danger: #b3453f;
+
+  /* Agent identity dots (claude uses --accent). */
+  --agent-codex: #2f8a8a;
+  --agent-opencode: #c07a3a;
+  --agent-grok: #b84f73;
+
+  /* WorldGraph is a dark working canvas in both app themes. */
+  --graph-bg: #0d0b14;
+  --graph-surface: #17131f;
+  --graph-border: #332b43;
+  --graph-text: #eee9f7;
+  --graph-muted: #aaa1b8;
+  --graph-character: #a795d6;
+  --graph-faction: #d6b36a;
+  --graph-place: #6ac2b8;
+  --graph-item: #d68f6a;
+  --graph-event: #7d9dd6;
+  --graph-skill: #c47fd6;
+  --graph-species: #8bc26a;
+  --graph-rule: #8a93a8;
+  --graph-foreshadow: #e0b040;
+  --graph-custom: #9988aa;
+  --graph-unknown: #6f6a63;
+  --graph-affinity: #79c690;
+  --graph-conflict: #e27770;
+  --graph-kinship: #e1bd73;
+  --graph-ownership: #d68f6a;
+  --graph-location: #6ac2b8;
+  --graph-participation: #7d9dd6;
+  --graph-knowledge: #9b91dd;
+  --graph-causality: #79a8e4;
+  --graph-constraint: #b18da8;
+
+  --shadow: 0 2px 8px rgba(44, 42, 38, 0.08);
+  --shadow-lg: 0 8px 24px rgba(44, 42, 38, 0.14);
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+
+  /* Type scale */
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-base: 14px;
+  --fs-md: 15px;
+  --fs-lg: 17px;
+
+  --font-ui: -apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-editor: 'LXGW WenKai', 'Source Han Serif SC', 'Noto Serif CJK SC', 'Songti SC', serif;
+  --font-mono: 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+
+  /* Background room layer. Off by default so the app renders flat until
+     a background is chosen; the feature flips these at runtime. */
+  --room-image: none;
+  --room-opacity: 0;
+  --room-blur: 0px;
+  /* Scrim tints the room toward --bg so it re-colors per theme. Strength is
+     multiplied by the room feature; 0 here keeps the layer inert. */
+  --room-scrim-strength: 46%;
+  /* Panel translucency, used only when the room layer is active. */
+  --panel-alpha: 1;
+  --panel-raised-alpha: 1;
+}
+
+/* System dark, only while in auto mode (no explicit light/dark). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']):not([data-theme='dark']) {
+    --bg: #1c1a17;
+    --panel: #24211d;
+    --panel-raised: #2c2925;
+    --border: #3a362f;
+    --border-strong: #4c473e;
+    --text: #e8e4da;
+    --text-secondary: #b5afa2;
+    --muted: #a39c8d;
+    --accent: #a795d6;
+    --accent-soft: #35304a;
+    --accent-text: #c3b5e8;
+    --on-accent: #1c1a17;
+    --success: #6fa87e;
+    --warning: #d0a04e;
+    --danger: #d1746f;
+    --agent-codex: #5fb3b3;
+    --agent-opencode: #d59a5e;
+    --agent-grok: #e07a9d;
+    --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Explicit dark. */
+:root[data-theme='dark'] {
+  --bg: #1c1a17;
+  --panel: #24211d;
+  --panel-raised: #2c2925;
+  --border: #3a362f;
+  --border-strong: #4c473e;
+  --text: #e8e4da;
+  --text-secondary: #b5afa2;
+  --muted: #a39c8d;
+  --accent: #a795d6;
+  --accent-soft: #35304a;
+  --accent-text: #c3b5e8;
+  --on-accent: #1c1a17;
+  --success: #6fa87e;
+  --warning: #d0a04e;
+  --danger: #d1746f;
+  --agent-codex: #5fb3b3;
+  --agent-opencode: #d59a5e;
+  --agent-grok: #e07a9d;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+}

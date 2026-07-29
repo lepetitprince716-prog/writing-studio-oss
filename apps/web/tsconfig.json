@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    // Keep Node globals out of browser src: without this, the @types/node
+    // devDependency would be auto-injected here. Tests opt in via tsconfig.test.json.
+    "types": []
+  },
+  "include": ["src"]
+}

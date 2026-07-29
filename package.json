@@ -1,0 +1,18 @@
+{
+  "name": "writing-studio",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Local interactive writing studio for long-form fiction: editor with AI ask/rewrite, canon sidebar, and pluggable external AI CLI backends",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@11.5.2",
+  "scripts": {
+    "dev": "pnpm --parallel --filter @writing-studio/server --filter @writing-studio/web dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r --workspace-concurrency=1 test",
+    "verify": "pnpm typecheck && pnpm build && pnpm test"
+  }
+}

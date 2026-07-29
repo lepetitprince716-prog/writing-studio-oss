@@ -1,0 +1,9 @@
+{
+  "projects": [
+    {
+      "id": "basic-example",
+      "vaultRoot": "../examples/basic-vault",
+      "enabled": true
+    }
+  ]
+}

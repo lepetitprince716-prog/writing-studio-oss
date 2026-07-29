@@ -1,0 +1,26 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+.pnpm-store/
+
+# Local agent state (Claude Code, etc.). launch.json is kept tracked because
+# it's just a dev-server launch config (runs `pnpm dev` on port 5183) for the
+# Claude Code Browser Preview tool - no machine-specific paths or secrets in
+# it. Everything else under .claude/ is local agent state and stays ignored.
+.claude/*
+!.claude/launch.json
+data/*
+!data/registry.example.json
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+*.pem
+*.key
+*.p12
+*.tsbuildinfo
+.env
+.env.*

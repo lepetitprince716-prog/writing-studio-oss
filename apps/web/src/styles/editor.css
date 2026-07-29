@@ -1,0 +1,363 @@
+/**
+ * Editor pane: toolbar, CodeMirror host, and the word-count status bar.
+ * Serif editor font + wide measure are set here; CM6 activeLine / selection
+ * theming lives in EditorPane.tsx.
+ */
+
+.editor-pane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  /* Row-flex child: without this a long chapter grows the pane past the
+     viewport and the whole document starts scrolling. */
+  min-height: 0;
+}
+
+.editor-empty {
+  margin: auto;
+  color: var(--muted);
+  font-size: var(--fs-md);
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.editor-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+  font-size: var(--fs-md);
+  min-width: 0;
+}
+
+.editor-title-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chapter-badge {
+  flex-shrink: 0;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  padding: 1px var(--space-2);
+}
+
+.editor-toolbar-tools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.editor-host {
+  flex: 1;
+  overflow: hidden;
+}
+
+.editor-host .cm-editor {
+  height: 100%;
+  font-family: var(--font-editor);
+  font-size: var(--editor-fs, var(--fs-lg));
+  background: transparent;
+  color: var(--text);
+}
+
+.editor-host .cm-scroller {
+  font-family: var(--font-editor);
+  line-height: 2.05;
+  /* Scroll inside the editor, never the document. */
+  overflow-y: auto;
+}
+
+.editor-host .cm-content {
+  max-width: 42em;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) 40vh;
+  caret-color: var(--accent);
+}
+
+.editor-host .cm-cursor {
+  border-left-color: var(--accent);
+}
+
+.editor-host .cm-gutters {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+}
+
+/* Active line + selection tinted with the accent. */
+.editor-host .cm-activeLine {
+  background: color-mix(in srgb, var(--accent-soft) 45%, transparent);
+}
+
+.editor-host .cm-selectionBackground,
+.editor-host .cm-focused .cm-selectionBackground,
+.editor-host ::selection {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+/* Markdown heading / quote line emphasis (from mdDecorations). */
+.editor-host .cm-md-h1 {
+  font-size: 1.25em;
+  font-weight: 700;
+}
+.editor-host .cm-md-h2 {
+  font-size: 1.14em;
+  font-weight: 700;
+}
+.editor-host .cm-md-h3 {
+  font-size: 1.06em;
+  font-weight: 700;
+}
+.editor-host .cm-md-h4,
+.editor-host .cm-md-h5,
+.editor-host .cm-md-h6 {
+  font-weight: 700;
+}
+.editor-host .cm-md-quote {
+  color: var(--text-secondary);
+}
+
+.editor-host .cm-lint-style,
+.editor-host .cm-lint-sensitive {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+.editor-host .cm-lint-style {
+  text-decoration-color: var(--warning);
+}
+
+.editor-host .cm-lint-sensitive {
+  text-decoration-color: var(--danger);
+}
+
+.cm-tooltip.cm-tooltip-hover {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--panel-raised);
+  box-shadow: var(--shadow);
+}
+
+.cm-lint-tooltip {
+  max-width: 360px;
+  padding: var(--space-2) var(--space-3);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+}
+
+.lint-panel {
+  z-index: 5;
+  max-height: min(38vh, 340px);
+  overflow: auto;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-raised);
+}
+
+.lint-panel-header,
+.lint-group-title,
+.lint-stale {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.lint-panel-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: var(--space-1) 0 var(--space-2);
+  background: var(--panel-raised);
+}
+
+.lint-panel-header > span,
+.lint-group-title > span:last-child {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.lint-panel-close {
+  margin-left: auto;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: var(--fs-lg);
+  cursor: pointer;
+}
+
+.lint-stale {
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid color-mix(in srgb, var(--warning) 45%, var(--border));
+  border-radius: var(--radius-sm);
+  color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 8%, transparent);
+  font-size: var(--fs-sm);
+}
+
+.lint-empty {
+  padding: var(--space-3) 0;
+  color: var(--success);
+  font-size: var(--fs-sm);
+}
+
+.lint-group {
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--border);
+}
+
+.lint-group-title code {
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+}
+
+.lint-category {
+  padding: 1px var(--space-1);
+  border-radius: var(--radius-sm);
+  color: var(--panel-raised);
+  background: var(--warning);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+}
+
+.lint-category.sensitive {
+  background: var(--danger);
+}
+
+.lint-group p {
+  margin: var(--space-1) 0 var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+
+.lint-occurrences {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.lint-occurrences button {
+  padding: 2px var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--accent-text);
+  background: var(--panel);
+  font: inherit;
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.lint-occurrences button:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.lint-occurrences button:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.font-size-value {
+  min-width: 18px;
+  text-align: center;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Word-count status bar ------------------------------------------------ */
+.editor-statusbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: 24px;
+  padding: 0 var(--space-3);
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.editor-statusbar .count-selected {
+  color: var(--accent-text);
+}
+
+.editor-statusbar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.save-state {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.save-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.save-dot.dirty {
+  background: var(--warning);
+}
+
+.save-dot.saving {
+  background: var(--muted);
+}
+
+/* Floating quick actions near the selection (positioning anchor). */
+.editor-pane {
+  position: relative;
+}
+
+.selection-bubble {
+  position: absolute;
+  z-index: 30;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--panel-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+}
+
+.selection-bubble button {
+  border: none;
+  background: none;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.selection-bubble button:hover {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}

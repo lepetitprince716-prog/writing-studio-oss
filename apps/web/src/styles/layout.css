@@ -1,0 +1,758 @@
+/**
+ * App shell: top bar and the three-column layout. Column collapse, resize,
+ * and focus mode build on the CSS custom properties declared here.
+ */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* --- Top bar ------------------------------------------------------------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.brand {
+  font-weight: 700;
+  font-size: var(--fs-md);
+  color: var(--accent);
+  letter-spacing: 0.01em;
+}
+
+.topbar-spacer {
+  margin-left: auto;
+}
+
+.project-select {
+  border: 1px solid var(--border);
+  background: var(--panel-raised);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--fs-sm);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.topbar-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* --- Layout columns ------------------------------------------------------ */
+.layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.pane {
+  flex-shrink: 0;
+  background: var(--panel);
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.2s ease;
+}
+
+/* No width animation while actively dragging a divider. */
+.app.resizing .pane {
+  transition: none;
+}
+
+/* Width is set inline from state (px value → animatable; a var-driven width
+   does not transition reliably in Chromium). */
+.pane.left {
+  border-right: 1px solid var(--border);
+}
+
+.pane.right {
+  border-left: 1px solid var(--border);
+}
+
+/* Right pane: 资料 / AI top-level tabs. Bodies stay mounted; `hidden` must win
+   over their flex display. */
+.right-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.right-tabs {
+  display: flex;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-2) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.right-tab {
+  position: relative;
+  border: none;
+  background: none;
+  padding: var(--space-1) var(--space-3);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.right-tab:hover {
+  color: var(--text-secondary);
+}
+
+.right-tab.active {
+  color: var(--accent-text);
+  font-weight: 600;
+  border-bottom-color: var(--accent);
+}
+
+.right-tab-badge {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: stream-blink 1s steps(2, start) infinite;
+}
+
+.right-tab-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.right-tab-body[hidden] {
+  display: none;
+}
+
+/* Topbar mode switch: 写作 / 生成. */
+.mode-switch {
+  display: flex;
+  margin-left: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.mode-btn {
+  border: none;
+  background: none;
+  padding: var(--space-1) var(--space-3);
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+
+.mode-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+/* Generation workspace (center area of generate mode). */
+.generate-workspace {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--bg);
+}
+
+.generate-setup-layout {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Keep the setup form anchored while asynchronously loaded recap content
+     changes the column's total height. */
+  justify-content: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  overflow-y: auto;
+}
+
+.generate-setup {
+  /* The form is the primary interaction — it never shrinks below its natural
+     height; the layout column scrolls instead. */
+  flex: 0 0 auto;
+  min-height: 0;
+  width: min(440px, 86%);
+  max-height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.generate-heading {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.generate-sub {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}
+
+.generate-target {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+.generate-target label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.generate-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.generate-doc-title {
+  font-weight: 600;
+  margin-right: var(--space-2);
+}
+
+.generate-doc-path {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.generate-header-tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+
+.generate-header-tools label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.generate-recap {
+  flex: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.generate-setup-recap {
+  flex: none;
+  width: min(720px, 94%);
+}
+
+/* The wrapper stays mounted while the panel renders nothing (no writingStatus
+   source, all-empty DTO) — collapse it so the column gap does not double up. */
+.generate-setup-recap:empty {
+  display: none;
+}
+
+.generate-setup-recap .generate-recap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.generate-recap-header {
+  display: flex;
+  align-items: stretch;
+}
+
+.generate-recap-toggle {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.generate-recap-toggle:hover {
+  background: var(--accent-soft);
+}
+
+.generate-recap-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.generate-recap-fullscreen {
+  flex: none;
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  border: 0;
+  border-left: 1px solid var(--border);
+  background: transparent;
+  color: var(--accent-text);
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+
+.generate-recap-fullscreen:hover {
+  background: var(--accent-soft);
+}
+
+.generate-recap-fullscreen:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.generate-recap-title {
+  flex: none;
+  font-weight: 700;
+}
+
+.generate-recap-meta {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.generate-recap-stale {
+  color: var(--warning);
+}
+
+.generate-recap-affordance {
+  margin-left: auto;
+  color: var(--accent-text);
+  font-size: var(--fs-xs);
+}
+
+.generate-recap-body {
+  max-height: min(34vh, 320px);
+  overflow-y: auto;
+  padding: 0 var(--space-4) var(--space-3);
+  color: var(--text-secondary);
+}
+
+.generate-setup-recap .generate-recap-body {
+  max-height: min(34vh, 360px);
+}
+
+.generate-recap-section + .generate-recap-section {
+  margin-top: var(--space-3);
+}
+
+.generate-recap-section-title {
+  margin: 0 0 var(--space-1);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.generate-recap-copy {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: var(--fs-sm);
+  line-height: 1.65;
+}
+
+.generate-recap-storylines {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.generate-recap-storyline {
+  display: grid;
+  grid-template-columns: minmax(5rem, 0.28fr) 1fr;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border);
+}
+
+.generate-recap-storyline strong,
+.generate-recap-pairs dt,
+.generate-recap-list strong {
+  color: var(--text);
+  font-size: var(--fs-sm);
+  /* name columns hold unbreakable tokens (en vault names, foreshadow ids);
+     min-width unlocks the grid item's implicit auto minimum */
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.generate-recap-more {
+  margin-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-2);
+}
+
+.generate-recap-more summary {
+  width: fit-content;
+  color: var(--accent-text);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+
+.generate-recap-more-body {
+  padding-top: var(--space-3);
+}
+
+.generate-recap-pairs {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+}
+
+.generate-recap-pairs > div {
+  display: grid;
+  grid-template-columns: minmax(5rem, 0.28fr) 1fr;
+  gap: var(--space-3);
+}
+
+.generate-recap-pairs dt,
+.generate-recap-pairs dd {
+  margin: 0;
+}
+
+.generate-recap-list,
+.generate-recap-checklist {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding-left: var(--space-5);
+  font-size: var(--fs-sm);
+}
+
+.generate-recap-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.generate-recap-list em {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  font-style: normal;
+}
+
+.generate-recap-full {
+  width: min(70ch, 100%);
+  margin: 0 auto;
+  color: var(--text-secondary);
+}
+
+.generate-recap-full-meta {
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.generate-recap-full .generate-recap-section + .generate-recap-section {
+  margin-top: var(--space-5);
+}
+
+.generate-beat-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--border);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+  overflow-x: auto;
+}
+
+.generate-beat-progress strong {
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.generate-beat-progress ol {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  white-space: nowrap;
+}
+
+.generate-beat-progress li[aria-current='step'] {
+  color: var(--accent);
+}
+
+.generate-preview {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-4) max(var(--space-4), calc((100% - 42rem) / 2));
+}
+
+.generate-stream,
+.generate-candidate {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--font-serif, inherit);
+  font-size: 1.05rem;
+  line-height: 1.9;
+}
+
+.generate-stream {
+  color: var(--text-secondary);
+}
+
+.generate-empty {
+  margin: auto;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  text-align: center;
+  padding-top: 30vh;
+}
+
+.generate-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.generate-count {
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
+.generate-actions .btn-primary {
+  margin-left: auto;
+}
+
+.generate-composer {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4) var(--space-3);
+  border-top: 1px solid var(--border);
+}
+
+.generate-composer textarea {
+  flex: 1;
+  min-height: 60px;
+  max-height: 200px;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+  background: var(--panel-raised);
+  color: var(--text);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+}
+
+.generate-composer textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+/* Collapsed / hidden panes drop their border so no seam remains. */
+.pane[aria-hidden='true'] {
+  border-color: transparent;
+}
+
+.pane-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.center {
+  flex: 1;
+  min-width: 160px;
+  display: flex;
+  min-height: 0;
+}
+
+/* Core layout for the editor workspace lives here (always loaded) — the copy
+   in graph.css ships inside the lazy graph chunk and must not be the only
+   source of these rules. */
+.editor-workspace {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.editor-workspace[hidden] {
+  display: none;
+}
+
+/* --- Resize divider ------------------------------------------------------ */
+.pane-divider {
+  flex: 0 0 auto;
+  width: 6px;
+  margin: 0 -3px;
+  z-index: 3;
+  cursor: col-resize;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  background: transparent;
+}
+
+.pane-divider-hit {
+  width: 1px;
+  background: var(--border);
+  transition:
+    background 0.12s ease,
+    width 0.12s ease;
+}
+
+.pane-divider:hover .pane-divider-hit,
+.pane-divider:focus-visible .pane-divider-hit {
+  width: 2px;
+  background: var(--accent);
+}
+
+.pane-divider:focus-visible {
+  outline: none;
+}
+
+/* --- Focus mode ---------------------------------------------------------- */
+.app.focus .topbar {
+  opacity: 0.001;
+  transition: opacity 0.25s ease;
+}
+
+.app.focus .topbar:hover,
+.app.focus .topbar:focus-within {
+  opacity: 1;
+}
+
+/* --- Mobile: both side panes become overlay drawers ---------------------- */
+.drawer-backdrop {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    gap: var(--space-1);
+    padding: var(--space-2);
+  }
+
+  .brand,
+  .git-badge,
+  .topbar-spacer {
+    display: none;
+  }
+
+  .project-select {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .topbar-tools {
+    flex: 0 0 auto;
+  }
+
+  /* Panes float above a full-width editor instead of squeezing it. */
+  .pane.left,
+  .pane.right {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    z-index: 20;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease;
+  }
+
+  .pane.left {
+    left: 0;
+    width: min(80vw, 300px) !important;
+    border-right: 1px solid var(--border);
+  }
+
+  .pane.right {
+    right: 0;
+    width: min(88vw, 420px) !important;
+    border-left: 1px solid var(--border);
+  }
+
+  .pane.left[aria-hidden='true'] {
+    transform: translateX(-100%);
+    border-color: var(--border);
+  }
+
+  .pane.right[aria-hidden='true'] {
+    transform: translateX(100%);
+    border-color: var(--border);
+  }
+
+  /* Dividers are meaningless once panes are overlays. */
+  .pane-divider {
+    display: none;
+  }
+
+  .drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 15;
+  }
+}
+
+/* --- Panel header (shared) ----------------------------------------------- */
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.panel-header-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.muted {
+  color: var(--muted);
+  padding: var(--space-2);
+  font-size: var(--fs-xs);
+}

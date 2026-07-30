@@ -38,11 +38,13 @@ const {
   selectGenerateRecapContent,
 } = await import('../src/components/GenerateRecapPanel.js');
 
+const sectionHeadings: WritingStatusDto['sectionHeadings'] = {
+  stopPoint: '停点', storylines: '故事线', activeForeshadow: '活跃伏笔速览',
+  characterOneLiners: '角色一句话状态', redLines: '写作红线', expressionBaseline: '表达基线',
+};
+
 const status: WritingStatusDto = {
-  sectionHeadings: {
-    stopPoint: '停点', storylines: '故事线', activeForeshadow: '活跃伏笔速览',
-    characterOneLiners: '角色一句话状态', redLines: '写作红线', expressionBaseline: '表达基线',
-  },
+  sectionHeadings,
   lastRefreshed: '2026-07-25',
   stopChapter: 12,
   stopPoint: '示例停点描述。\n示例停点后续说明。',
@@ -269,7 +271,7 @@ test('fullscreen recap hides empty sections and renders nothing for an empty DTO
 
   const empty = renderToStaticMarkup(createElement(GenerateRecapFullView, {
     status: {
-      sectionHeadings: status.sectionHeadings,
+      sectionHeadings,
       lastRefreshed: null,
       stopChapter: null,
       stopPoint: ' ',
@@ -401,7 +403,7 @@ test('recap persistence survives throwing storage and falls back to phase defaul
 test('recap view renders nothing when the DTO exists but every field is empty', () => {
   const html = renderToStaticMarkup(createElement(GenerateRecapPanelView, {
     status: {
-      sectionHeadings: status.sectionHeadings,
+      sectionHeadings,
       lastRefreshed: null,
       stopChapter: null,
       stopPoint: ' ',

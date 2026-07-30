@@ -3,10 +3,7 @@ import test from 'node:test';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import type {
-  CanonSectionRef,
-  ContentTreeLeaf,
-  DocumentMeta,
-  WritingStatusDto,
+  CanonSectionRef, ContentTreeLeaf, DocumentMeta, WritingStatusDto,
 } from '@writing-studio/contract';
 import { EditorChapterBadge, TreeChapterLabel } from '../src/components/ChapterLabels.js';
 import { formatChapterLabel } from '../src/lib/chapter-label.js';
@@ -147,6 +144,8 @@ test('writing-status stop point preserves its shell and formats only the chapter
 });
 
 test('writing-status repair controls follow resolved non-Chinese section headings', () => {
+  // The panel used to look canon sections up by hard-coded Chinese literals, so
+  // a vault whose headings resolve to anything else lost every repair control.
   const sectionHeadings: WritingStatusDto['sectionHeadings'] = {
     stopPoint: 'Checkpoint',
     storylines: 'Threads',
@@ -183,4 +182,9 @@ test('writing-status repair controls follow resolved non-Chinese section heading
   }));
 
   assert.equal(markup.match(/>修订此节<\/button>/g)?.length, 6);
+
+  // The captions name the author's own sections, so they must be the vault's
+  // headings rather than this component's Chinese defaults.
+  for (const label of Object.values(sectionHeadings)) assert.match(markup, new RegExp(label));
+  assert.doesNotMatch(markup, /故事线|活跃伏笔|角色一句话|写作红线|表达基线/);
 });

@@ -113,6 +113,38 @@ async function abruptWebSocketUpgrade(port: number): Promise<void> {
   });
 }
 
+/**
+ * Settle the loop-back path before anything is put on a deadline.
+ *
+ * The first outbound connection in a fresh test process can take well over a
+ * second. Observed while diagnosing: the server's `connection` event fires but
+ * `upgrade` never does, a plain `connect` to the same port also fails to
+ * complete, and a 1000ms timer fires at 2004ms — the event loop itself is
+ * stalled, so nothing socket-related can make progress. It clears after the
+ * first successful connection and every later one takes single-digit
+ * milliseconds.
+ *
+ * That is process start-up, not the behaviour under test. Absorbing it here
+ * keeps the deadlines below tight enough to still catch a genuine hang.
+ */
+async function warmUpLoopback(port: number, budgetMs = 15_000): Promise<void> {
+  const deadline = Date.now() + budgetMs;
+  for (;;) {
+    const connected = await new Promise<boolean>((resolvePromise) => {
+      const socket = connect({ host: '127.0.0.1', port });
+      const settle = (value: boolean): void => {
+        clearTimeout(timer);
+        socket.destroy();
+        resolvePromise(value);
+      };
+      const timer = setTimeout(() => settle(false), 1_000);
+      socket.once('connect', () => settle(true));
+      socket.once('error', () => settle(false));
+    });
+    if (connected || Date.now() >= deadline) return;
+  }
+}
+
 async function openWebSocket(url: string, origin?: string): Promise<WebSocket> {
   // Node's WebSocket implementation accepts the Undici `headers` option at
   // runtime, while the current ambient DOM type exposes only `protocols`.
@@ -224,10 +256,12 @@ test('localhost Host and Origin gate protects REST and WebSocket upgrades', { ti
       'boundary app listen',
     ));
     const port = Number(address.port);
-    // Exercise the Host/Origin gate with a direct RFC 6455 handshake. This
-    // keeps a security-boundary assertion independent from the scheduling of
-    // Node's global WebSocket client; real client lifecycle is covered by the
-    // dedicated shutdown tests below.
+    await warmUpLoopback(port);
+
+    // Two levels, deliberately. The direct RFC 6455 handshake pins the exact
+    // bytes the gate returns, independent of any client library. The standard
+    // client then proves a browser-equivalent stack actually completes the
+    // upgrade and closes cleanly through the same gate.
     const originlessUpgrade = await beforeDeadline(
       websocketUpgrade(port),
       'originless WebSocket upgrade',
@@ -239,6 +273,25 @@ test('localhost Host and Origin gate protects REST and WebSocket upgrades', { ti
       'Vite WebSocket upgrade',
     );
     assert.match(viteUpgrade, /^HTTP\/1\.1 101 /);
+
+    const originlessSocket = await beforeDeadline(
+      openWebSocket(`${address.toString().replace(/^http/, 'ws')}ws?projectId=${projectId}`),
+      'originless standard WebSocket upgrade',
+    );
+    const originlessClosed = socketClose(originlessSocket);
+    originlessSocket.close();
+    await beforeDeadline(originlessClosed, 'originless WebSocket close');
+
+    const viteSocket = await beforeDeadline(
+      openWebSocket(
+        `${address.toString().replace(/^http/, 'ws')}ws?projectId=${projectId}`,
+        'http://localhost:5183',
+      ),
+      'Vite standard WebSocket upgrade',
+    );
+    const viteClosed = socketClose(viteSocket);
+    viteSocket.close();
+    await beforeDeadline(viteClosed, 'Vite WebSocket close');
 
     const rejectedUpgrade = await beforeDeadline(
       websocketUpgrade(port, 'https://evil.example'),

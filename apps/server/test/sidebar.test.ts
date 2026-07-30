@@ -229,6 +229,8 @@ test('writing-status section labels are project-localizable', async () => {
     const payload = new SidebarService().getSource(project(vaultRoot, [source]), source.id, 'writer');
     assert.equal(payload?.parser, 'heading-sections');
     if (payload?.parser === 'heading-sections' && payload.kind === 'writingStatus') {
+      // The DTO must carry the resolved labels; the panel keys its canon-repair
+      // controls off them rather than off hard-coded Chinese literals.
       assert.deepEqual(payload.data.sectionHeadings, sectionHeadings);
       assert.deepEqual(
         payload.writerSections?.map((section) => section.headingPath),

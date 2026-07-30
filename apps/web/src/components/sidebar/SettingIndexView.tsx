@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react';
 import type { CanonSectionRef, SettingIndexEntry } from '@writing-studio/contract';
 import { copyText } from '../../lib/clipboard.js';
 import { ContextMenu, isContextMenuOpenKey, useContextMenu } from '../ContextMenu.js';
+import { Empty } from '../Empty.js';
 import { ChevronRightIcon } from '../icons.js';
 import { CanonRepairButton } from './CanonRepairButton.js';
 import {
@@ -155,7 +156,7 @@ export function SettingIndexView({
         onChange={(e) => setQuery(e.target.value)}
       />
       {grouped.length === 0 ? (
-        <div className="muted">无匹配词条</div>
+        <Empty text="无匹配词条" />
       ) : (
         grouped.map(([section, list]) => (
           <Section

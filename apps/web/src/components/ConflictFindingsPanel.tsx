@@ -30,7 +30,9 @@ export function ConflictFindingsPanel({
   if (!response) {
     return (
       <section className="conflict-results parse-fallback" aria-label="冲突检查结果">
-        <div className="conflict-honesty">解析失败，请人工阅读</div>
+        {/* The only failure branch here. It cannot use ErrorState, which owns
+            its whole region — the raw response still renders beside it. */}
+        <div className="conflict-honesty" role="alert">解析失败，请人工阅读</div>
         <pre>{rawText}</pre>
       </section>
     );

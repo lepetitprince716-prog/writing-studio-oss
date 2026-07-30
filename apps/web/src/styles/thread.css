@@ -65,7 +65,7 @@
 
 .thread-section-label {
   padding: var(--space-1) var(--space-3) 0;
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--muted);
 }
 
@@ -176,7 +176,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--muted);
   margin-bottom: var(--space-1);
 }
@@ -229,7 +229,7 @@
 
 .conflict-honesty {
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   line-height: 1.45;
 }
 
@@ -267,7 +267,7 @@
 .conflict-group-title span,
 .conflict-finding-meta span {
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
 }
 
 .conflict-finding {
@@ -316,7 +316,7 @@
   white-space: pre-wrap;
   color: var(--text-secondary);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-xs);
 }
 
 /* Streaming cursor. */
@@ -428,14 +428,14 @@
 /* Raw structured-output stream (rewrite runs) shown dimmed in mono. */
 .message-content.stream-raw {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-xs);
   color: var(--muted);
 }
 
 /* Live tool activity inside the streaming bubble. */
 .tool-activity {
   margin-top: var(--space-1);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--muted);
 }
 
@@ -443,7 +443,7 @@
 .run-usage {
   padding: var(--space-1) var(--space-3);
   border-top: 1px solid var(--border);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
   color: var(--muted);
 }
 
@@ -452,7 +452,7 @@
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--muted);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
 }
 
 .context-manifest summary {

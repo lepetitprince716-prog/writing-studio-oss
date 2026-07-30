@@ -339,7 +339,7 @@
   max-width: 150px;
   overflow: hidden;
   color: var(--graph-muted);
-  font: 12px/1.2 var(--font-ui);
+  font: var(--fs-xs)/1.2 var(--font-ui);
   text-overflow: ellipsis;
   white-space: nowrap;
   text-shadow: 0 1px 3px var(--graph-bg), 0 0 4px var(--graph-bg);
@@ -397,7 +397,7 @@
   border-radius: 999px;
   padding: 2px 6px;
   color: var(--graph-muted);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
 }
 
 .graph-detail-aliases,
@@ -448,7 +448,7 @@
 .graph-detail-relation span,
 .graph-detail-relation small {
   color: var(--graph-muted);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
 }
 
 .graph-source-link {
@@ -569,13 +569,13 @@
 .graph-diagnostic span,
 .graph-diagnostic small {
   color: var(--graph-muted);
-  font-size: 11px;
+  font-size: var(--fs-2xs);
 }
 
 .graph-source-drawer pre {
   overflow: auto;
   white-space: pre-wrap;
-  font: 12px/1.65 var(--font-mono);
+  font: var(--fs-xs)/1.65 var(--font-mono);
 }
 
 .graph-error {

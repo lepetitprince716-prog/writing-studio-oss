@@ -12,7 +12,7 @@ export function StopPointUnsetNotice({
 }): React.JSX.Element {
   if (view === 'writer') {
     return (
-      <div className="graph-state graph-unset-empty">
+      <div className="graph-state graph-unset-empty" role="status">
         <p>{STOP_POINT_UNSET_MESSAGE}</p>
         <button onClick={onReturnToPlanner}>返回作者全图</button>
       </div>

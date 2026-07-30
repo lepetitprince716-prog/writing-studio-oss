@@ -1,4 +1,5 @@
 import type { TrashEntry } from '@writing-studio/contract';
+import { Empty, ErrorState, LoadingSkeleton } from './Empty.js';
 import { Modal } from './Modal.js';
 
 export function formatTrashDeletedAt(deletedAt: string): string {
@@ -36,11 +37,11 @@ export function TrashList({
   return (
     <div className="trash-content">
       {loading ? (
-        <div className="muted trash-state">正在加载回收站…</div>
+        <LoadingSkeleton label="正在加载回收站" />
       ) : error ? (
-        <div className="project-error trash-state">回收站加载失败：{error}</div>
+        <ErrorState message={`回收站加载失败：${error}`} />
       ) : entries.length === 0 ? (
-        <div className="muted trash-state">回收站是空的</div>
+        <Empty text="回收站是空的" />
       ) : (
         <div className="trash-list">
           {entries.map((entry) => {

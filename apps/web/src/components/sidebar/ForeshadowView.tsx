@@ -7,6 +7,7 @@ import { useState } from 'react';
 import type { CanonSectionRef, ForeshadowEntry } from '@writing-studio/contract';
 import { copyText } from '../../lib/clipboard.js';
 import { ContextMenu, useContextMenu } from '../ContextMenu.js';
+import { Empty } from '../Empty.js';
 import { ChevronRightIcon } from '../icons.js';
 import { CanonRepairButton } from './CanonRepairButton.js';
 import {
@@ -105,7 +106,7 @@ export function ForeshadowView({
     else menu.openFromKeyboard(event, spec);
   }
 
-  if (entries.length === 0) return <div className="muted">暂无伏笔</div>;
+  if (entries.length === 0) return <Empty text="暂无伏笔" />;
   return (
     <div className="dto-root">
       {entries.map((entry, i) => (

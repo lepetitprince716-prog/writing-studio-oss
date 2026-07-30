@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import type { DocumentMeta, MentionLocation } from '@writing-studio/contract';
 import { ContextManifestPanel } from '../src/components/ContextManifestPanel.js';
 import { DraftSection } from '../src/components/DraftSection.js';
+import { Empty, ErrorState, LoadingSkeleton } from '../src/components/Empty.js';
 import { buildTrashDeleteMessage, TrashList } from '../src/components/TrashModal.js';
 import {
   MentionResults,
@@ -36,6 +37,32 @@ test('context manifest renders only server-supplied entries and all diagnostic f
   assert.match(html, /已截断/);
   assert.match(html, />mention</);
   assert.match(html, /quota 800/);
+});
+
+test('the three async-state primitives carry the ARIA each one is supposed to', () => {
+  // Loading and error interrupt, so they announce; empty is ordinary content
+  // and must not. A role creeping onto Empty would make every empty list in
+  // the app talk over whatever the reader is doing.
+  const loading = renderToStaticMarkup(createElement(LoadingSkeleton, { label: '正在加载草稿' }));
+  assert.match(loading, /role="status"/);
+  assert.match(loading, /aria-label="正在加载草稿"/);
+
+  const empty = renderToStaticMarkup(createElement(Empty, { text: '暂无草稿' }));
+  assert.match(empty, /暂无草稿/);
+  assert.doesNotMatch(empty, /role=/);
+
+  const quiet = renderToStaticMarkup(createElement(ErrorState, { message: '读取失败' }));
+  assert.match(quiet, /role="alert"/);
+  assert.match(quiet, /读取失败/);
+  // No retry action passed means no button — the primitive must not imply an
+  // affordance the caller cannot honor.
+  assert.doesNotMatch(quiet, /<button/);
+
+  const retryable = renderToStaticMarkup(createElement(ErrorState, {
+    message: '读取失败',
+    onRetry: noop,
+  }));
+  assert.match(retryable, /<button type="button" class="btn-ghost">重试<\/button>/);
 });
 
 test('draft section exposes the required empty state and draft title list', () => {
@@ -72,6 +99,34 @@ test('draft section exposes the required empty state and draft title list', () =
   assert.match(listed, /逐段采纳复审/);
   assert.match(listed, /aria-current="true"/);
   assert.match(listed, /回收站/);
+});
+
+test('the sidebar async branches announce themselves through the shared primitives', () => {
+  // Both of these branches shipped for months with no coverage at all, which is
+  // how they drifted onto three different idioms in the first place.
+  const draftProps = {
+    drafts: [], activeDocId: undefined, onOpen: noop, onOpenTrash: noop, onContextMenu: noop,
+  };
+  const trashProps = { entries: [], draftsDir: '草稿', restoringDocId: null, onRestore: noop };
+
+  const branches: Array<{ loading: string; failed: string }> = [
+    {
+      loading: renderToStaticMarkup(createElement(DraftSection, { ...draftProps, loading: true, error: null })),
+      failed: renderToStaticMarkup(createElement(DraftSection, { ...draftProps, loading: false, error: '磁盘不可读' })),
+    },
+    {
+      loading: renderToStaticMarkup(createElement(TrashList, { ...trashProps, loading: true, error: null })),
+      failed: renderToStaticMarkup(createElement(TrashList, { ...trashProps, loading: false, error: '磁盘不可读' })),
+    },
+  ];
+  for (const { loading, failed } of branches) {
+    assert.match(loading, /role="status"/);
+    assert.match(loading, /class="skeleton"/);
+    assert.match(failed, /role="alert"/);
+    assert.match(failed, /磁盘不可读/);
+    // Neither call site has a retry action to offer, so neither may show one.
+    assert.doesNotMatch(failed, /重试/);
+  }
 });
 
 test('trash list exposes its empty state, manual cleanup note, and restore loading state', () => {

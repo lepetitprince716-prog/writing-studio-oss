@@ -79,12 +79,22 @@
   --radius-md: 8px;
   --radius-lg: 10px;
 
-  /* Type scale */
+  /* Type scale. --fs-2xs sits below the --fs-xs floor and is only for muted
+     meta text: timestamps, counts, badges, table cells in the DTO panels. */
+  --fs-2xs: 11px;
   --fs-xs: 12px;
   --fs-sm: 13px;
   --fs-base: 14px;
   --fs-md: 15px;
   --fs-lg: 17px;
+
+  /* Motion. Only durations that already repeat across files are named here;
+     one-off timings (the modal's 0.15s/0.16s backdrop-leads-content pair, the
+     focus-mode topbar, the room layer) stay literal so folding them in cannot
+     silently retime them. Easing is `ease` everywhere and needs no token. */
+  --duration-fast: 0.12s;
+  --duration-base: 0.18s;
+  --duration-panel: 0.2s;
 
   --font-ui: -apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   --font-editor: 'LXGW WenKai', 'Source Han Serif SC', 'Noto Serif CJK SC', 'Songti SC', serif;

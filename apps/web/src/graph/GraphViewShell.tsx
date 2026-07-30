@@ -18,6 +18,7 @@ import type {
   WorldNode,
 } from '@writing-studio/contract';
 import { WORLD_GRAPH_RENDER_BUDGET } from '@writing-studio/contract';
+import { XIcon } from '../components/icons.js';
 import { api } from '../api.js';
 import { useStudio } from '../store.js';
 import '../styles/graph.css';
@@ -333,15 +334,21 @@ export function GraphViewShell({ onClose }: GraphViewShellProps): React.JSX.Elem
           >
             编辑关系数据
           </button>
-          <button onClick={onClose}>关闭</button>
+          {/* The icon close button the modal and the toast already use. No
+              .btn-icon class: that carries theme panel colours, and inside
+              .graph-workspace the plain button already inherits --graph-text. */}
+          <button onClick={onClose} aria-label="关闭"><XIcon size={14} /></button>
         </div>
       </header>
 
       <div className="graph-toolbar">
-        <div className="graph-mode-switch" aria-label="视图模式">
-          <button className={mode === 'local2d' ? 'active' : ''} onClick={() => setWorkspaceMode('local2d')}>局部 2D</button>
-          <button className={mode === 'global3d' ? 'active' : ''} onClick={() => setWorkspaceMode('global3d')}>全局 3D</button>
-          <button className={mode === 'list' ? 'active' : ''} onClick={() => setWorkspaceMode('list')}>关系列表</button>
+        {/* A mutually exclusive group, so it is a tablist like the app's three
+            other mode switches — not aria-pressed, which is for independent
+            toggles and would claim all three can be on at once. */}
+        <div className="graph-mode-switch" role="tablist" aria-label="视图模式">
+          <button role="tab" aria-selected={mode === 'local2d'} className={mode === 'local2d' ? 'active' : ''} onClick={() => setWorkspaceMode('local2d')}>局部 2D</button>
+          <button role="tab" aria-selected={mode === 'global3d'} className={mode === 'global3d' ? 'active' : ''} onClick={() => setWorkspaceMode('global3d')}>全局 3D</button>
+          <button role="tab" aria-selected={mode === 'list'} className={mode === 'list' ? 'active' : ''} onClick={() => setWorkspaceMode('list')}>关系列表</button>
         </div>
         <label className="graph-search">
           <span>搜索</span>
@@ -382,7 +389,11 @@ export function GraphViewShell({ onClose }: GraphViewShellProps): React.JSX.Elem
           />
           writer-safe 预览
         </label>
-        <button className={diagnosticsOpen ? 'active' : ''} onClick={() => setDiagnosticsOpen((value) => !value)}>
+        <button
+          className={diagnosticsOpen ? 'active' : ''}
+          aria-pressed={diagnosticsOpen}
+          onClick={() => setDiagnosticsOpen((value) => !value)}
+        >
           图体检 {snapshot?.diagnosticCount ?? 0}
         </button>
       </div>
@@ -465,9 +476,13 @@ export function GraphViewShell({ onClose }: GraphViewShellProps): React.JSX.Elem
 
       <div className={`graph-body${writerStopUnset ? ' graph-body-unset' : ''}`}>
         <div className="graph-main">
-          {loading && <div className="graph-state">正在读取关系图…</div>}
+          {/* These keep the graph's own markup rather than the shared Empty/
+              ErrorState: those are styled against the theme-aware panel
+              surface, and this canvas is dark in both themes. Only the missing
+              announcements are added. */}
+          {loading && <div className="graph-state" role="status">正在读取关系图…</div>}
           {!loading && error && (
-            <div className="graph-state graph-error">
+            <div className="graph-state graph-error" role="alert">
               <p>{error}</p>
               <button onClick={refresh}>重试</button>
             </div>
@@ -494,7 +509,7 @@ export function GraphViewShell({ onClose }: GraphViewShellProps): React.JSX.Elem
           )}
           {!loading && snapshot && !writerStopUnset && mode !== 'list' && display.nodes.length > 0 && (
             <CanvasBoundary key={snapshot.version} onError={() => setMode('list')}>
-              <Suspense fallback={<div className="graph-state">正在加载图形渲染器…</div>}>
+              <Suspense fallback={<div className="graph-state" role="status">正在加载图形渲染器…</div>}>
                 <LazyGraphCanvas
                   graph={display}
                   snapshot={snapshot}
@@ -525,7 +540,10 @@ export function GraphViewShell({ onClose }: GraphViewShellProps): React.JSX.Elem
 
       {diagnosticsOpen && snapshot && (
         <aside className="graph-diagnostics" aria-label="关系图诊断">
-          <header><strong>图体检</strong><button onClick={() => setDiagnosticsOpen(false)}>关闭</button></header>
+          <header>
+            <strong>图体检</strong>
+            <button onClick={() => setDiagnosticsOpen(false)} aria-label="关闭"><XIcon size={14} /></button>
+          </header>
           {snapshot.diagnostics.length === 0 ? <p>没有诊断项。</p> : snapshot.diagnostics.map((diagnostic, index) => (
             <button
               key={`${diagnostic.code}-${diagnostic.file}-${diagnostic.line ?? index}`}
@@ -545,14 +563,19 @@ export function GraphViewShell({ onClose }: GraphViewShellProps): React.JSX.Elem
         <aside className="graph-source-drawer" aria-label="只读出处摘录">
           <header>
             <strong>{sourceExcerpt?.source.label ?? sourceExcerpt?.source.docId ?? '出处'}</strong>
-            <button onClick={() => {
-              sourceAbortRef.current?.abort();
-              sourceAbortRef.current = null;
-              setSourceState({ requestKey: sourceRequestKey, excerpt: null, loading: false, error: null });
-            }}>关闭</button>
+            <button
+              aria-label="关闭"
+              onClick={() => {
+                sourceAbortRef.current?.abort();
+                sourceAbortRef.current = null;
+                setSourceState({ requestKey: sourceRequestKey, excerpt: null, loading: false, error: null });
+              }}
+            >
+              <XIcon size={14} />
+            </button>
           </header>
-          {sourceLoading && <p>正在读取有界摘录…</p>}
-          {sourceError && <p className="graph-error">{sourceError}</p>}
+          {sourceLoading && <p role="status">正在读取有界摘录…</p>}
+          {sourceError && <p className="graph-error" role="alert">{sourceError}</p>}
           {sourceExcerpt && (
             <>
               <pre>{sourceExcerpt.markdown}</pre>

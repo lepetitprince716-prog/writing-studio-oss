@@ -18,6 +18,7 @@ import {
 } from '../../lib/memory-cutoff.js';
 import { ChevronRightIcon } from '../icons.js';
 import { ContextMenu, useContextMenu } from '../ContextMenu.js';
+import { Empty } from '../Empty.js';
 import { Modal } from '../Modal.js';
 import {
   MentionResults,
@@ -278,7 +279,7 @@ export function CharacterCardView({
     else menu.openFromKeyboard(event, spec);
   }
 
-  if (cards.length === 0) return <div className="muted">暂无角色卡</div>;
+  if (cards.length === 0) return <Empty text="暂无角色卡" />;
   return (
     <div className="dto-root">
       {cards.map((card, i) => (

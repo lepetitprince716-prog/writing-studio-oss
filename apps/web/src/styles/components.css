@@ -22,9 +22,9 @@
   line-height: 1.4;
   cursor: pointer;
   transition:
-    border-color 0.12s ease,
-    background 0.12s ease,
-    color 0.12s ease;
+    border-color var(--duration-fast) ease,
+    background var(--duration-fast) ease,
+    color var(--duration-fast) ease;
 }
 
 .btn:hover:not(:disabled),
@@ -131,7 +131,7 @@
 .tree-dir-caret {
   display: inline-flex;
   color: var(--muted);
-  transition: transform 0.12s ease;
+  transition: transform var(--duration-fast) ease;
 }
 
 .tree-chapter {
@@ -203,11 +203,6 @@
   font-weight: 600;
 }
 
-.draft-state {
-  padding: var(--space-1) var(--space-3);
-  font-size: var(--fs-xs);
-}
-
 .project-state {
   padding: var(--space-3);
   font-size: var(--fs-xs);
@@ -253,6 +248,10 @@
   font-size: var(--fs-xs);
   line-height: 1.5;
   max-width: 22em;
+}
+
+.empty-state-error .empty-text {
+  color: var(--danger);
 }
 
 /* --- Skeleton loading ---------------------------------------------------- */

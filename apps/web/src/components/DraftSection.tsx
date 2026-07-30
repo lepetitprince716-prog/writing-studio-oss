@@ -1,5 +1,6 @@
 import type { DocumentMeta } from '@writing-studio/contract';
 import { onActivateKey } from '../lib/keyboard.js';
+import { Empty, ErrorState, LoadingSkeleton } from './Empty.js';
 import { FileTextIcon } from './icons.js';
 
 export function DraftSection({
@@ -28,11 +29,11 @@ export function DraftSection({
         <button className="draft-trash-link" onClick={onOpenTrash}>回收站</button>
       </div>
       {loading ? (
-        <div className="muted draft-state">正在加载草稿…</div>
+        <LoadingSkeleton label="正在加载草稿" />
       ) : error ? (
-        <div className="project-error draft-state">草稿加载失败：{error}</div>
+        <ErrorState message={`草稿加载失败：${error}`} />
       ) : drafts.length === 0 ? (
-        <div className="muted draft-state">暂无草稿</div>
+        <Empty icon={<FileTextIcon size={22} />} text="暂无草稿" />
       ) : drafts.map((draft) => (
         <div
           key={draft.docId}

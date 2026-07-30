@@ -62,7 +62,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: width 0.2s ease;
+  transition: width var(--duration-panel) ease;
 }
 
 /* No width animation while actively dragging a divider. */
@@ -634,8 +634,8 @@
   width: 1px;
   background: var(--border);
   transition:
-    background 0.12s ease,
-    width 0.12s ease;
+    background var(--duration-fast) ease,
+    width var(--duration-fast) ease;
 }
 
 .pane-divider:hover .pane-divider-hit,
@@ -693,7 +693,7 @@
     bottom: 0;
     z-index: 20;
     box-shadow: var(--shadow);
-    transition: transform 0.2s ease;
+    transition: transform var(--duration-panel) ease;
   }
 
   .pane.left {

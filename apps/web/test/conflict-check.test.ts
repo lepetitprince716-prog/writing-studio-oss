@@ -75,6 +75,8 @@ test('findings panel distinguishes empty results from raw parse fallback', () =>
     onRepairCanon: () => undefined,
   }));
   assert.match(empty, /未发现冲突（AI 初筛）/);
+  // A clean result is not an interruption, so it must not announce itself.
+  assert.doesNotMatch(empty, /role="alert"/);
 
   const fallback = renderToStaticMarkup(createElement(ConflictFindingsPanel, {
     response: null,
@@ -85,4 +87,5 @@ test('findings panel distinguishes empty results from raw parse fallback', () =>
   }));
   assert.match(fallback, /解析失败，请人工阅读/);
   assert.match(fallback, /unparsed output/);
+  assert.match(fallback, /role="alert"/);
 });

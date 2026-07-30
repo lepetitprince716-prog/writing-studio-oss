@@ -119,6 +119,7 @@ test('writing-status stop point preserves its shell and formats only the chapter
       stopPoint: '停点', storylines: '故事线', activeForeshadow: '活跃伏笔速览',
       characterOneLiners: '角色一句话状态', redLines: '写作红线', expressionBaseline: '表达基线',
     },
+    activeForeshadowColumns: { id: '编号', content: '内容', status: '状态' },
     lastRefreshed: null,
     stopChapter: 12,
     stopPoint: '',
@@ -154,8 +155,12 @@ test('writing-status repair controls follow resolved non-Chinese section heading
     redLines: 'Guardrails',
     expressionBaseline: 'Style baseline',
   };
+  const activeForeshadowColumns: WritingStatusDto['activeForeshadowColumns'] = {
+    id: 'Tag', content: 'Detail', status: 'State',
+  };
   const data: WritingStatusDto = {
     sectionHeadings,
+    activeForeshadowColumns,
     lastRefreshed: null,
     stopChapter: null,
     stopPoint: 'Checkpoint body',
@@ -184,7 +189,11 @@ test('writing-status repair controls follow resolved non-Chinese section heading
   assert.equal(markup.match(/>修订此节<\/button>/g)?.length, 6);
 
   // The captions name the author's own sections, so they must be the vault's
-  // headings rather than this component's Chinese defaults.
+  // headings rather than this component's Chinese defaults. The same holds one
+  // level down: the foreshadow table is captioned by its own header row.
   for (const label of Object.values(sectionHeadings)) assert.match(markup, new RegExp(label));
-  assert.doesNotMatch(markup, /故事线|活跃伏笔|角色一句话|写作红线|表达基线/);
+  for (const column of Object.values(activeForeshadowColumns)) {
+    assert.match(markup, new RegExp(`<th>${column}</th>`));
+  }
+  assert.doesNotMatch(markup, /故事线|活跃伏笔|角色一句话|写作红线|表达基线|编号|内容|状态/);
 });

@@ -169,6 +169,7 @@ test('heading-section kinds derive writing status and foreshadowing from configu
         lastRefreshed: '2026-07-22', stopChapter: 75, stopPoint: '地点G。',
         storylines: [{ name: '主线', body: '占位情节内容' }],
         activeForeshadow: [{ id: 'F07', content: '追踪', status: '推进' }],
+        activeForeshadowColumns: { id: '编号', content: '内容', status: '状态' },
         characterOneLiners: [{ name: '角色A', text: '安全' }],
         redLines: ['不预告。'], expressionBaseline: '写准。',
       },
@@ -239,6 +240,11 @@ test('writing-status section labels are project-localizable', async () => {
       assert.equal(payload.data.stopPoint, 'Example stop point.');
       assert.deepEqual(payload.data.storylines, [{ name: 'Main', body: 'Example storyline progress' }]);
       assert.equal(payload.data.activeForeshadow[0]?.id, 'C1');
+      // Column labels come from the table's own header row, which the parser
+      // used to drop on the floor.
+      assert.deepEqual(payload.data.activeForeshadowColumns, {
+        id: 'ID', content: 'Content', status: 'Status',
+      });
       assert.equal(payload.data.characterOneLiners[0]?.name, 'Character A');
       assert.deepEqual(payload.data.redLines, ['No spoilers.']);
       assert.equal(payload.data.expressionBaseline, 'Be precise.');
@@ -343,6 +349,44 @@ test('explicit writing-status heading overrides the en locale preset', async () 
     // locale pack — a partial override must not disable the preset.
     assert.deepEqual(payload.data.storylines, [{ name: 'Main', body: 'Continue' }]);
     assert.deepEqual(payload.data.redLines, ['No spoilers.']);
+  });
+});
+
+test('foreshadow column labels fall back per cell when the table does not supply them', async () => {
+  await withVault(async (vaultRoot) => {
+    await writeFile(join(vaultRoot, 'status-narrow.md'), [
+      '## Stop point', 'At the bridge.',
+      // Two columns only, so the third label has no header cell to come from.
+      '## Active foreshadow overview', '| Tag | Detail |', '| - | - |', '| C1 | Bell |',
+    ].join('\n'));
+    await writeFile(join(vaultRoot, 'status-bare.md'), [
+      '## Stop point', 'At the bridge.',
+      '## Active foreshadow overview', 'Nothing open yet.',
+    ].join('\n'));
+    const source = (id: string, file: string): SidebarSource => ({
+      id, label: 'Status', file, parser: 'heading-sections', order: 1,
+      parserConfig: {
+        kind: 'writingStatus',
+        lastRefreshedRegex: 'Last refreshed: ([0-9-]+)',
+        stopChapterRegex: 'Story stop: Chapter (\\d+)',
+      },
+    });
+    const sources = [source('status_narrow', 'status-narrow.md'), source('status_bare', 'status-bare.md')];
+    const service = new SidebarService();
+
+    const narrow = service.getSource(project(vaultRoot, sources, 'en'), 'status_narrow', 'writer');
+    assert.equal(narrow?.parser, 'heading-sections');
+    if (narrow?.parser !== 'heading-sections' || narrow.kind !== 'writingStatus') return;
+    assert.deepEqual(narrow.data.activeForeshadowColumns, {
+      id: 'Tag', content: 'Detail', status: 'Status',
+    });
+
+    const bare = service.getSource(project(vaultRoot, sources, 'en'), 'status_bare', 'writer');
+    assert.equal(bare?.parser, 'heading-sections');
+    if (bare?.parser !== 'heading-sections' || bare.kind !== 'writingStatus') return;
+    assert.deepEqual(bare.data.activeForeshadowColumns, {
+      id: 'ID', content: 'Content', status: 'Status',
+    });
   });
 });
 

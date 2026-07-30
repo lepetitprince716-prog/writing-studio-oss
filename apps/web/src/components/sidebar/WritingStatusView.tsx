@@ -107,9 +107,9 @@ export function WritingStatusView({
             <table className="dto-table">
               <thead>
                 <tr>
-                  <th>编号</th>
-                  <th>内容</th>
-                  <th>状态</th>
+                  <th>{data.activeForeshadowColumns.id}</th>
+                  <th>{data.activeForeshadowColumns.content}</th>
+                  <th>{data.activeForeshadowColumns.status}</th>
                 </tr>
               </thead>
               <tbody>

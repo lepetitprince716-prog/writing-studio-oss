@@ -1,1 +1,4 @@
-export type { WritingStatusSectionHeadings } from '@writing-studio/contract';
+export type {
+  WritingStatusForeshadowColumns,
+  WritingStatusSectionHeadings,
+} from '@writing-studio/contract';

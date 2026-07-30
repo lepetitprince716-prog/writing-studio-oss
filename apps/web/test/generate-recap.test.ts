@@ -43,8 +43,13 @@ const sectionHeadings: WritingStatusDto['sectionHeadings'] = {
   characterOneLiners: '角色一句话状态', redLines: '写作红线', expressionBaseline: '表达基线',
 };
 
+const activeForeshadowColumns: WritingStatusDto['activeForeshadowColumns'] = {
+  id: '编号', content: '内容', status: '状态',
+};
+
 const status: WritingStatusDto = {
   sectionHeadings,
+  activeForeshadowColumns,
   lastRefreshed: '2026-07-25',
   stopChapter: 12,
   stopPoint: '示例停点描述。\n示例停点后续说明。',
@@ -272,6 +277,7 @@ test('fullscreen recap hides empty sections and renders nothing for an empty DTO
   const empty = renderToStaticMarkup(createElement(GenerateRecapFullView, {
     status: {
       sectionHeadings,
+      activeForeshadowColumns,
       lastRefreshed: null,
       stopChapter: null,
       stopPoint: ' ',
@@ -404,6 +410,7 @@ test('recap view renders nothing when the DTO exists but every field is empty', 
   const html = renderToStaticMarkup(createElement(GenerateRecapPanelView, {
     status: {
       sectionHeadings,
+      activeForeshadowColumns,
       lastRefreshed: null,
       stopChapter: null,
       stopPoint: ' ',

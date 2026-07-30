@@ -92,6 +92,16 @@ export type WritingStatusSectionHeadingOverrides = {
   [Key in keyof WritingStatusSectionHeadings]?: string | undefined;
 };
 
+/**
+ * Column labels of the active-foreshadow table, taken from the table's own header
+ * row when it has one and falling back to the locale pack otherwise.
+ */
+export interface WritingStatusForeshadowColumns {
+  id: string;
+  content: string;
+  status: string;
+}
+
 export interface WritingStatusSidebarConfig {
   kind: 'writingStatus';
   lastRefreshedRegex: string;

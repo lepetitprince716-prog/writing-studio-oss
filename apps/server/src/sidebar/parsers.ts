@@ -10,8 +10,11 @@ import type {
   SidebarSource,
   WritingStatusDto,
 } from '@writing-studio/contract';
-import { writingStatusHeadings } from './locales/index.js';
-import type { WritingStatusSectionHeadings } from './locales/types.js';
+import { writingStatusForeshadowColumns, writingStatusHeadings } from './locales/index.js';
+import type {
+  WritingStatusForeshadowColumns,
+  WritingStatusSectionHeadings,
+} from './locales/types.js';
 import type { MdNode, SidebarRole } from './types.js';
 
 interface CharacterSection extends CharacterCardSection {
@@ -224,7 +227,14 @@ function parseWritingStatus(
     return { name: line, [contentKey]: '' };
   });
   const activeTable = section(heading('activeForeshadow')).find((node) => node.type === 'table');
-  const rows = activeTable ? tableRows(activeTable).slice(1) : [];
+  const activeRows = activeTable ? tableRows(activeTable) : [];
+  const rows = activeRows.slice(1);
+  // The header row is the author's own wording, so it captions the panel. The
+  // locale pack only fills cells the table does not supply — a missing table, or
+  // one narrower than three columns.
+  const localeColumns = writingStatusForeshadowColumns(localePreset);
+  const columnLabel = (index: number, key: keyof WritingStatusForeshadowColumns): string =>
+    activeRows[0]?.[index] || localeColumns[key];
   const data: WritingStatusDto = {
     sectionHeadings,
     lastRefreshed: matchConfigRegex('lastRefreshedRegex'),
@@ -235,6 +245,11 @@ function parseWritingStatus(
     stopPoint: nodeBody(section(heading('stopPoint'))),
     storylines: namedItems(section(heading('storylines')), 'body') as WritingStatusDto['storylines'],
     activeForeshadow: rows.map((row) => ({ id: row[0] ?? '', content: row[1] ?? '', status: row[2] ?? '' })),
+    activeForeshadowColumns: {
+      id: columnLabel(0, 'id'),
+      content: columnLabel(1, 'content'),
+      status: columnLabel(2, 'status'),
+    },
     characterOneLiners: namedItems(
       section(heading('characterOneLiners')), 'text',
     ) as WritingStatusDto['characterOneLiners'],

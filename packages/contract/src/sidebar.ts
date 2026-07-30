@@ -4,7 +4,11 @@
  * applied at the server before DTOs leave the process.
  */
 
-import type { Anchor, WritingStatusSectionHeadings } from './models.js';
+import type {
+  Anchor,
+  WritingStatusForeshadowColumns,
+  WritingStatusSectionHeadings,
+} from './models.js';
 
 /** Sidebar safety context selected by `view` query parameter. */
 export type SidebarView = 'writer' | 'planner';
@@ -43,6 +47,8 @@ export interface WritingStatusDto {
   storylines: Array<{ name: string; body: string }>;
   /** ## 活跃伏笔速览 table rows. */
   activeForeshadow: Array<{ id: string; content: string; status: string }>;
+  /** Header labels of that table, so the panel can caption it with the vault's own words. */
+  activeForeshadowColumns: WritingStatusForeshadowColumns;
   /** ## 角色一句话状态 list items. */
   characterOneLiners: Array<{ name: string; text: string }>;
   /** ## 写作红线 numbered items. */

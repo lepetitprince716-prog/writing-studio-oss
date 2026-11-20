@@ -1,0 +1,3 @@
+# RFC 6455 Section 1.3 canonical WebSocket handshake example nonce ('dGhlIHNhbXBsZSBub25jZQ==')
+6e3f870b8eed466f1ab230cc3de9d0b982dd8dbe:apps/server/test/local-boundary.test.ts:generic-api-key:72
+6e3f870b8eed466f1ab230cc3de9d0b982dd8dbe:apps/server/test/local-boundary.test.ts:generic-api-key:110
